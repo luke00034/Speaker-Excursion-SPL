@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 
-# 已知參數
+# SPK Parameter
 rho_0 = 1.225  # kg/m^3
 c = 343  # m/s
 S_D = 2.65e-4  # m^2
@@ -14,7 +14,7 @@ M_MS = 0.405e-3  # kg
 d = 0.1  # m
 a = np.sqrt(S_D / np.pi)
 
-# 計算相關參數
+# Further Parameter
 V_AS = rho_0 * c**2 * (S_D**2) * C_MS
 M_AS=M_MS/(S_D**2)
 C_AS=(S_D**2)*C_MS
@@ -24,20 +24,20 @@ Q_MS=(1/R_MS)*np.sqrt(M_MS / C_MS)
 Q_ES=(R_E/Bl**2)*np.sqrt(M_MS / C_MS)
 Q_TS=Q_MS*Q_ES/(Q_MS+Q_ES)
 
-# 頻率軸與 s 定義
+# Frequency & Ztransform Define
 frequencies = np.logspace(np.log10(100), np.log10(10000), 1000)
 omega = 2 * np.pi * frequencies
 s = 1j * omega
 p_ref = 2e-5  # 參考聲壓
 
-# G(s) 高通傳遞函數
+# G(s) Transfunction
 s_omega_ratio = s / w_s
 G_s = (s_omega_ratio**2) / (s_omega_ratio**2 + (1/Q_TS)*s_omega_ratio + 1)
 
-# 定義電壓
+# Input Voltage
 base_voltage_rated = 2.83  # Vrms
 
-# 計算 SPL & x_D 函數
+#  SPL & x_D 
 def compute_SPL_and_displacement(E_g):
     
     p = (rho_0 / (4 * np.pi*d)) * (Bl * E_g) / (S_D * R_E * M_AS) * G_s
@@ -48,11 +48,11 @@ def compute_SPL_and_displacement(E_g):
     x_D_mm = 1000 * x_D
     return SPL, x_D_mm
 
-# 計算理論 SPL 與 xD
+# Calac SPL 與 xD
 SPL_rated, xD_rated = compute_SPL_and_displacement(2.83)
 
 
-# 繪圖：SPL
+# SPL Plot
 plt.figure(figsize=(10, 6))
 plt.plot(frequencies, SPL_rated, label='Sim: Rated Voltage ', linestyle='--')
 
@@ -68,7 +68,7 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
-# --- 繪圖：x_D 與實測疊圖 ---
+# --- Excursion Plot ---
 plt.figure(figsize=(10, 6))
 plt.plot(frequencies, np.abs(xD_rated), label="Simulated x_D (Rated)", color='b')
 plt.axhline(0.4, color='orange', linestyle=':', linewidth=1.2, label='Xmax = 0.4 mm')
